@@ -3,63 +3,40 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-
     <title>Mi GBA</title>
-
     <style>
-        * {
-            box-sizing: border-box;
-        }
-
+        * { box-sizing: border-box; }
         html, body {
-            margin: 0;
-            padding: 0;
-            width: 100%;
-            height: 100%;
+            margin: 0; padding: 0;
+            width: 100%; height: 100%;
             background: #111;
             font-family: Arial, sans-serif;
             color: white;
+            overflow: hidden;
         }
 
         /* MENÚ */
         #menu {
-            width: 100%;
-            min-height: 100vh;
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            justify-content: center;
-            padding: 30px;
+            width: 100%; height: 100%;
+            display: flex; flex-direction: column;
+            align-items: center; justify-content: center;
+            padding: 30px; overflow-y: auto;
         }
 
-        #menu h1 {
-            margin-bottom: 35px;
-            font-size: 32px;
-        }
+        #menu h1 { margin-bottom: 35px; font-size: 32px; }
 
         .games {
-            display: flex;
-            gap: 25px;
-            flex-wrap: wrap;
-            justify-content: center;
+            display: flex; gap: 25px;
+            flex-wrap: wrap; justify-content: center;
         }
 
         .game {
-            width: 220px;
-            height: 220px;
-            background: #222;
-            border: 2px solid #444;
-            border-radius: 15px;
-            cursor: pointer;
-
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            justify-content: center;
-
-            text-align: center;
-            padding: 20px;
-
+            width: 220px; height: 220px;
+            background: #222; border: 2px solid #444;
+            border-radius: 15px; cursor: pointer;
+            display: flex; flex-direction: column;
+            align-items: center; justify-content: center;
+            text-align: center; padding: 20px;
             transition: 0.2s;
         }
 
@@ -69,16 +46,8 @@
             background: #2c2c2c;
         }
 
-        .game h2 {
-            font-size: 20px;
-            margin: 0;
-        }
-
-        .game p {
-            font-size: 13px;
-            color: #aaa;
-            margin-top: 10px;
-        }
+        .game h2 { font-size: 20px; margin: 0; }
+        .game p { font-size: 13px; color: #aaa; margin-top: 10px; }
 
         .game-upload {
             border: 2px dashed #666;
@@ -92,59 +61,35 @@
 
         #emulator {
             display: none;
-            width: 100%;
-            height: 100%;
+            width: 100vw; height: 100vh;
         }
 
-        #game {
-            width: 100%;
-            height: 100%;
-        }
+        #game { width: 100%; height: 100%; }
 
         #back {
-            position: fixed;
-            top: 10px;
-            left: 10px;
-            z-index: 99999;
-
-            padding: 10px 15px;
-
-            background: rgba(0,0,0,0.7);
-            color: white;
-
-            border: 1px solid #555;
-            border-radius: 8px;
-
-            cursor: pointer;
-            font-size: 14px;
-
-            display: none;
+            position: fixed; top: 10px; left: 10px;
+            z-index: 99999; padding: 10px 15px;
+            background: rgba(0,0,0,0.8); color: white;
+            border: 1px solid #555; border-radius: 8px;
+            cursor: pointer; font-size: 14px; display: none;
         }
 
-        #back:hover {
-            background: rgba(50,50,50,0.9);
-        }
+        #back:hover { background: rgba(50,50,50,0.9); }
     </style>
 </head>
-
 <body>
 
     <div id="menu">
-
         <h1>CONTENEDOR SECRETO</h1>
-
         <div class="games">
-
             <div class="game" onclick="startPreloadedGame('Apotris', 'https://files.catbox.moe/t6xhcm.gba')">
                 <h2>Apotris</h2>
                 <p>tetrisbasicamente</p>
             </div>
-
             <div class="game" onclick="startPreloadedGame('CastleHOD', 'https://files.catbox.moe/a553h9.GBA')">
                 <h2>Castle</h2>
                 <p>HOD</p>
             </div>
-
             <div class="game" onclick="startPreloadedGame('Pokémon', 'https://files.catbox.moe/kx8sw8.gba')">
                 <h2>Pokmn</h2>
                 <p>poke</p>
@@ -154,12 +99,8 @@
                 <p>.gba</p>
                 <input type="file" id="file-input" accept=".gba,.zip" style="display: none;" onchange="loadLocalRom(event)">
             </div>
-
         </div>
-
     </div>
-
-
 
     <div id="emulator">
         <div id="game"></div>
@@ -167,18 +108,22 @@
 
     <button id="back" onclick="backToMenu()">← Volver al menú</button>
 
-
     <script>
+        // Configuración de rendimiento y persistencia
         EJS_player = "#game";
         EJS_core = "gba";
         EJS_color = "#7f7f7f";
         EJS_startOnLoaded = true;
         EJS_pathtodata = "https://cdn.emulatorjs.org/stable/data/";
+        
+        // OPCIONES CLAVE DE RENDIMIENTO Y PERSISTENCIA
+        EJS_threads = true;            // Usa multihilo si el celular lo soporta
+        EJS_cacheSave = true;          // Persiste las opciones en el navegador
+        EJS_storage = true;            // Habilita guardado local (partidas y settings)
 
         function startPreloadedGame(name, url) {
             EJS_gameName = name;
             EJS_gameUrl = url;
-
             launchEmulator();
         }
 
@@ -187,16 +132,12 @@
             if (!file) return;
 
             EJS_gameName = file.name.replace(/\.[^/.]+$/, "");
-            
             EJS_gameUrl = URL.createObjectURL(file);
-
             launchEmulator();
         }
 
-
         function launchEmulator() {
             document.getElementById("menu").style.display = "none";
-
             document.getElementById("emulator").style.display = "block";
             document.getElementById("back").style.display = "block";
 
@@ -206,9 +147,9 @@
         }
 
         function backToMenu() {
+            // Fuerza una recarga limpia para destruir la instancia en memoria
             location.reload();
         }
     </script>
-
 </body>
 </html>
