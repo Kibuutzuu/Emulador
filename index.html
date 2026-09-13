@@ -109,17 +109,11 @@
     <button id="back" onclick="backToMenu()">← Volver al menú</button>
 
     <script>
-        // Configuración de rendimiento y persistencia
         EJS_player = "#game";
         EJS_core = "gba";
         EJS_color = "#7f7f7f";
         EJS_startOnLoaded = true;
         EJS_pathtodata = "https://cdn.emulatorjs.org/stable/data/";
-        
-        // OPCIONES CLAVE DE RENDIMIENTO Y PERSISTENCIA
-        EJS_threads = true;            // Usa multihilo si el celular lo soporta
-        EJS_cacheSave = true;          // Persiste las opciones en el navegador
-        EJS_storage = true;            // Habilita guardado local (partidas y settings)
 
         function startPreloadedGame(name, url) {
             EJS_gameName = name;
@@ -147,7 +141,6 @@
         }
 
         function backToMenu() {
-            // Fuerza una recarga limpia para destruir la instancia en memoria
             location.reload();
         }
     </script>
