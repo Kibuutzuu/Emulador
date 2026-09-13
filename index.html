@@ -169,7 +169,7 @@
 
     <script>
         function startPreloadedGame(name, url) {
-            setOptimizedMobileSettings();
+            setEmulatorSettings();
             window.EJS_gameName = name;
             window.EJS_gameUrl = url;
 
@@ -180,27 +180,24 @@
             const file = event.target.files;
             if (!file) return;
 
-            setOptimizedMobileSettings();
+            setEmulatorSettings();
             window.EJS_gameName = file.name.replace(/\.[^/.]+$/, "");
             window.EJS_gameUrl = URL.createObjectURL(file);
 
             launchEmulator();
         }
 
-        function setOptimizedMobileSettings() {
+        function setEmulatorSettings() {
             window.EJS_player = "#game";
             window.EJS_core = "gba";
             window.EJS_color = "#7f7f7f";
             window.EJS_startOnLoaded = true;
             window.EJS_pathtodata = "https://emulatorjs.org";
-            window.EJS_language = "es-ES";
+            window.EJS_language = "en-US";
 
             window.EJS_WebAudio = true;
-            window.EJS_mouse = false;
-            window.EJS_multitap = false;
 
             if (/Mobi|Android|iPhone/i.test(navigator.userAgent)) {
-                window.EJS_DEBUG_XXV = true; 
                 window.EJS_threads = "1";
             }
         }
