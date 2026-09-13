@@ -80,7 +80,6 @@
             margin-top: 10px;
         }
 
-        /* DISEÑO ESPECIAL PARA CARGA LOCAL */
         .game-upload {
             border: 2px dashed #666;
             background: #1a1a1a;
@@ -91,7 +90,6 @@
             background: #1e2e1f;
         }
 
-        /* EMULADOR */
         #emulator {
             display: none;
             width: 100%;
@@ -103,7 +101,6 @@
             height: 100%;
         }
 
-        /* BOTÓN VOLVER */
         #back {
             position: fixed;
             top: 10px;
@@ -132,20 +129,18 @@
 
 <body>
 
-    <!-- MENÚ PRINCIPAL -->
     <div id="menu">
 
-        <h1>🎮 Mi Emulador GBA</h1>
+        <h1>CONTENEDOR SECRETO</h1>
 
         <div class="games">
 
-            <!-- JUEGO 1: APOTRIS (HOMEBREW SEGURO EN TU GITHUB) -->
             <div class="game" onclick="startPreloadedGame('Apotris', 'https://drive.google.com/file/d/1Q0wYP-o3AI0ADGks7JTs0q7gcoqyqtUk/view?usp=drive_link')">
                 <h2>Apotris</h2>
                 <p>tetrisbasicamente</p>
             </div>
 
-            <div class="game" onclick="startPreloadedGame('CastleHOD', 'https://drive.google.com/file/d/1w7Bdsy1QDslXGH4HoqPCTvA10BMIRlgu/view?usp=drive_link')">
+            <div class="game" onclick="startPreloadedGame('CastleHOD', 'https://cdn.discordapp.com/attachments/1463262044064059413/1548796069985390703/castle.GBA?ex=6aa85c3e&is=6aa70abe&hm=95934f9a68c7b4169cda01a27b95d9e55c17ae9475e2a36ac3b21d24177f692f&')">
                 <h2>Castle</h2>
                 <p>HOD</p>
             </div>
@@ -154,8 +149,6 @@
                 <h2>Pokmn</h2>
                 <p>poke</p>
             </div>
-
-            <!-- BOTÓN MULTIUSO: CARGAR TU PROPIO ARCHIVO DESDE CELULAR/PC -->
             <div class="game game-upload" onclick="document.getElementById('file-input').click()">
                 <h2>rom Local</h2>
                 <p>.gba</p>
@@ -176,7 +169,6 @@
 
 
     <script>
-        // Configuración Global Inicial de EmulatorJS
         EJS_player = "#game";
         EJS_core = "gba";
         EJS_color = "#7f7f7f";
