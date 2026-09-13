@@ -21,6 +21,7 @@
             color: white;
         }
 
+        /* MENÚ */
         #menu {
             width: 100%;
             min-height: 100vh;
@@ -134,21 +135,20 @@
 
         <div class="games">
 
-            <div class="game" onclick="startPreloadedGame('Apotris', 'https://catbox.moe')">
+            <div class="game" onclick="startPreloadedGame('Apotris', 'https://files.catbox.moe/t6xhcm.gba')">
                 <h2>Apotris</h2>
                 <p>tetrisbasicamente</p>
             </div>
 
-            <div class="game" onclick="startPreloadedGame('CastleHOD', 'https://catbox.moe')">
+            <div class="game" onclick="startPreloadedGame('CastleHOD', 'https://files.catbox.moe/a553h9.GBA')">
                 <h2>Castle</h2>
                 <p>HOD</p>
             </div>
 
-            <div class="game" onclick="startPreloadedGame('Pokémon', 'https://catbox.moe')">
+            <div class="game" onclick="startPreloadedGame('Pokémon', 'https://files.catbox.moe/kx8sw8.gba')">
                 <h2>Pokmn</h2>
                 <p>poke</p>
             </div>
-            
             <div class="game game-upload" onclick="document.getElementById('file-input').click()">
                 <h2>rom Local</h2>
                 <p>.gba</p>
@@ -159,67 +159,53 @@
 
     </div>
 
+
+
     <div id="emulator">
-        <div id="game-container">
-            <div id="game"></div>
-        </div>
+        <div id="game"></div>
     </div>
 
     <button id="back" onclick="backToMenu()">← Volver al menú</button>
 
+
     <script>
+        EJS_player = "#game";
+        EJS_core = "gba";
+        EJS_color = "#7f7f7f";
+        EJS_startOnLoaded = true;
+        EJS_pathtodata = "https://cdn.emulatorjs.org/stable/data/";
+
         function startPreloadedGame(name, url) {
-            setEmulatorSettings();
-            window.EJS_gameName = name;
-            window.EJS_gameUrl = url;
+            EJS_gameName = name;
+            EJS_gameUrl = url;
 
             launchEmulator();
         }
 
         function loadLocalRom(event) {
-            const file = event.target.files;
+            const file = event.target.files[0];
             if (!file) return;
 
-            setEmulatorSettings();
-            window.EJS_gameName = file.name.replace(/\.[^/.]+$/, "");
-            window.EJS_gameUrl = URL.createObjectURL(file);
+            EJS_gameName = file.name.replace(/\.[^/.]+$/, "");
+            
+            EJS_gameUrl = URL.createObjectURL(file);
 
             launchEmulator();
         }
 
-        function setEmulatorSettings() {
-            window.EJS_player = "#game";
-            window.EJS_core = "gba";
-            window.EJS_color = "#7f7f7f";
-            window.EJS_startOnLoaded = true;
-            window.EJS_pathtodata = "https://emulatorjs.org";
-            window.EJS_language = "en-US";
-
-            window.EJS_WebAudio = true;
-
-            if (/Mobi|Android|iPhone/i.test(navigator.userAgent)) {
-                window.EJS_threads = "1";
-            }
-        }
 
         function launchEmulator() {
             document.getElementById("menu").style.display = "none";
+
             document.getElementById("emulator").style.display = "block";
             document.getElementById("back").style.display = "block";
 
-            const oldScript = document.getElementById("emu-script");
-            if (oldScript) oldScript.remove();
-
-            document.getElementById("game-container").innerHTML = '<div id="game"></div>';
-
             const script = document.createElement("script");
-            script.id = "emu-script";
-            script.src = "https://emulatorjs.orgloader.js";
+            script.src = "https://cdn.emulatorjs.org/stable/data/loader.js";
             document.body.appendChild(script);
         }
 
         function backToMenu() {
-            window.EJS_gameUrl = null;
             location.reload();
         }
     </script>
