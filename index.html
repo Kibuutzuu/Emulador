@@ -1,26 +1,222 @@
-<html>
-    <head>
-        <!--HTML file auto generated using EmulatorJS codehelper-->
-        <style>
-            body, html {
-                margin: 0;
-                padding: 0;
-            }
-        </style>
-    </head>
-    <body>
-        <div style="width:100%;height:100%;max-width:100%">
-            <div id="game"></div>
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <title>Mi GBA</title>
+
+    <style>
+        * {
+            box-sizing: border-box;
+        }
+
+        html, body {
+            margin: 0;
+            padding: 0;
+            width: 100%;
+            height: 100%;
+            background: #111;
+            font-family: Arial, sans-serif;
+            color: white;
+        }
+
+        /* MENÚ */
+        #menu {
+            width: 100%;
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            padding: 30px;
+        }
+
+        #menu h1 {
+            margin-bottom: 35px;
+            font-size: 32px;
+        }
+
+        .games {
+            display: flex;
+            gap: 25px;
+            flex-wrap: wrap;
+            justify-content: center;
+        }
+
+        .game {
+            width: 220px;
+            height: 220px;
+            background: #222;
+            border: 2px solid #444;
+            border-radius: 15px;
+            cursor: pointer;
+
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+
+            text-align: center;
+            padding: 20px;
+
+            transition: 0.2s;
+        }
+
+        .game:hover {
+            transform: scale(1.05);
+            border-color: #7f7f7f;
+            background: #2c2c2c;
+        }
+
+        .game h2 {
+            font-size: 20px;
+            margin: 0;
+        }
+
+        .game p {
+            font-size: 13px;
+            color: #aaa;
+            margin-top: 10px;
+        }
+
+        /* DISEÑO ESPECIAL PARA CARGA LOCAL */
+        .game-upload {
+            border: 2px dashed #666;
+            background: #1a1a1a;
+        }
+        
+        .game-upload:hover {
+            border-color: #4caf50;
+            background: #1e2e1f;
+        }
+
+        /* EMULADOR */
+        #emulator {
+            display: none;
+            width: 100%;
+            height: 100%;
+        }
+
+        #game {
+            width: 100%;
+            height: 100%;
+        }
+
+        /* BOTÓN VOLVER */
+        #back {
+            position: fixed;
+            top: 10px;
+            left: 10px;
+            z-index: 99999;
+
+            padding: 10px 15px;
+
+            background: rgba(0,0,0,0.7);
+            color: white;
+
+            border: 1px solid #555;
+            border-radius: 8px;
+
+            cursor: pointer;
+            font-size: 14px;
+
+            display: none;
+        }
+
+        #back:hover {
+            background: rgba(50,50,50,0.9);
+        }
+    </style>
+</head>
+
+<body>
+
+    <!-- MENÚ PRINCIPAL -->
+    <div id="menu">
+
+        <h1>🎮 Mi Emulador GBA</h1>
+
+        <div class="games">
+
+            <!-- JUEGO 1: APOTRIS (HOMEBREW SEGURO EN TU GITHUB) -->
+            <div class="game" onclick="startPreloadedGame('Apotris', 'https://drive.google.com/file/d/1Q0wYP-o3AI0ADGks7JTs0q7gcoqyqtUk/view?usp=drive_link')">
+                <h2>Apotris</h2>
+                <p>tetrisbasicamente</p>
+            </div>
+
+            <div class="game" onclick="startPreloadedGame('CastleHOD', 'https://drive.google.com/file/d/1w7Bdsy1QDslXGH4HoqPCTvA10BMIRlgu/view?usp=drive_link')">
+                <h2>Castle</h2>
+                <p>HOD</p>
+            </div>
+
+            <div class="game" onclick="startPreloadedGame('Pokémon', 'https://drive.google.com/file/d/1u4pnA40yr2e0vapyIAqhDsCDgjFy1mPq/view?usp=drive_link')">
+                <h2>Pokmn</h2>
+                <p>poke</p>
+            </div>
+
+            <!-- BOTÓN MULTIUSO: CARGAR TU PROPIO ARCHIVO DESDE CELULAR/PC -->
+            <div class="game game-upload" onclick="document.getElementById('file-input').click()">
+                <h2>rom Local</h2>
+                <p>.gba</p>
+                <input type="file" id="file-input" accept=".gba,.zip" style="display: none;" onchange="loadLocalRom(event)">
+            </div>
+
         </div>
-        <script>
-            EJS_player = "#game";
-            EJS_core = "gba";
-            EJS_gameName = "Castlevania Harmony of Dissonance";
-            EJS_color = "#7f7f7f";
-            EJS_startOnLoaded = true;
-            EJS_pathtodata = "https://cdn.emulatorjs.org/stable/data/";
-            EJS_gameUrl = "Castlevania - Harmony of Dissonance [GBA] Español.zip";
-        </script>
-        <script src="https://cdn.emulatorjs.org/stable/data/loader.js"></script>
-    </body>
+
+    </div>
+
+
+
+    <div id="emulator">
+        <div id="game"></div>
+    </div>
+
+    <button id="back" onclick="backToMenu()">← Volver al menú</button>
+
+
+    <script>
+        // Configuración Global Inicial de EmulatorJS
+        EJS_player = "#game";
+        EJS_core = "gba";
+        EJS_color = "#7f7f7f";
+        EJS_startOnLoaded = true;
+        EJS_pathtodata = "https://cdn.emulatorjs.org/stable/data/";
+
+        function startPreloadedGame(name, url) {
+            EJS_gameName = name;
+            EJS_gameUrl = url;
+
+            launchEmulator();
+        }
+
+        function loadLocalRom(event) {
+            const file = event.target.files[0];
+            if (!file) return;
+
+            EJS_gameName = file.name.replace(/\.[^/.]+$/, "");
+            
+            EJS_gameUrl = URL.createObjectURL(file);
+
+            launchEmulator();
+        }
+
+
+        function launchEmulator() {
+            document.getElementById("menu").style.display = "none";
+
+            document.getElementById("emulator").style.display = "block";
+            document.getElementById("back").style.display = "block";
+
+            const script = document.createElement("script");
+            script.src = "https://cdn.emulatorjs.org/stable/data/loader.js";
+            document.body.appendChild(script);
+        }
+
+        function backToMenu() {
+            location.reload();
+        }
+    </script>
+
+</body>
 </html>
