@@ -13,8 +13,10 @@
             background: #111;
             font-family: Arial, sans-serif;
             color: white;
+            overflow: hidden;
         }
 
+        /* MENÚ */
         #menu {
             width: 100%; min-height: 100vh;
             display: flex; flex-direction: column;
@@ -76,6 +78,7 @@
         #back:hover { background: rgba(50,50,50,0.9); }
     </style>
 </head>
+
 <body>
 
     <div id="menu">
@@ -108,13 +111,17 @@
     <button id="back" onclick="backToMenu()">← Volver al menú</button>
 
     <script>
-
+        // Limpieza de bases de datos locales e IndexedDB de EmulatorJS
         async function purgeEmulatorCache() {
             if ('indexedDB' in window) {
-                const dbs = await window.indexedDB.databases();
-                dbs.forEach(db => {
-                    window.indexedDB.deleteDatabase(db.name);
-                });
+                try {
+                    const dbs = await window.indexedDB.databases();
+                    dbs.forEach(db => {
+                        window.indexedDB.deleteDatabase(db.name);
+                    });
+                } catch (e) {
+                    console.log("No se pudieron enumerar las DBs", e);
+                }
             }
             if ('caches' in window) {
                 const keys = await caches.keys();
@@ -122,17 +129,33 @@
             }
         }
 
-        async function startPreloadedGame(name, url) {
-            await purgeEmulatorCache();
-            
+        function setupPerformanceFlags() {
             window.EJS_player = "#game";
             window.EJS_core = "gba";
             window.EJS_color = "#7f7f7f";
             window.EJS_startOnLoaded = true;
             window.EJS_pathtodata = "https://cdn.emulatorjs.org/stable/data/";
+            window.EJS_oldCache = false;
+
+            // OPTIMIZACIONES PARA MÓVIL
+            window.EJS_mouseToTouch = true;
+            window.EJS_Settings = {
+                "gba.sound": "1",
+                "shader": "disabled"
+            };
+
+            // Si detecta teléfono/tablet, evita renderizar a resoluciones 2K/4K nativas del panel
+            if (/Android|iPhone|iPad|iPod/i.test(navigator.userAgent)) {
+                window.EJS_scale = 1;
+            }
+        }
+
+        async function startPreloadedGame(name, url) {
+            await purgeEmulatorCache();
+            setupPerformanceFlags();
+            
             window.EJS_gameName = name;
             window.EJS_gameUrl = url;
-            window.EJS_oldCache = false;
 
             launchEmulator();
         }
@@ -142,15 +165,10 @@
             if (!file) return;
 
             await purgeEmulatorCache();
+            setupPerformanceFlags();
 
-            window.EJS_player = "#game";
-            window.EJS_core = "gba";
-            window.EJS_color = "#7f7f7f";
-            window.EJS_startOnLoaded = true;
-            window.EJS_pathtodata = "https://cdn.emulatorjs.org/stable/data/";
             window.EJS_gameName = file.name.replace(/\.[^/.]+$/, "");
             window.EJS_gameUrl = URL.createObjectURL(file);
-            window.EJS_oldCache = false;
 
             launchEmulator();
         }
